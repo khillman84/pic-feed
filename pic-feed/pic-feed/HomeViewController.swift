@@ -16,8 +16,6 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
     func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType){
@@ -32,6 +30,8 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         print("Info: \(info)")
+        imageView.image = info["UIImagePickerControllerOriginalImage"] as? UIImage
+        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func imageTapped(_ sender: Any) {
