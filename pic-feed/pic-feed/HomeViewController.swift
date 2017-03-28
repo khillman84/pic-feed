@@ -14,15 +14,31 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var filterButtonTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var postButtonBottomConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let defaultImage = imageView.image
+        Filters.originalImage = defaultImage!
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         
         filterButtonTopConstraint.constant = 8
         
         UIView.animate(withDuration: 0.4) {
             self.view.layoutIfNeeded()
         }
+        
+        postButtonBottomConstraint.constant = 8
+        
+        UIView.animate(withDuration: 1.0) {
+            self.view.layoutIfNeeded()
+        }
+        
+        
     }
     
     func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType){
@@ -78,6 +94,24 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
             })
         }
         
+        let chromeAction = UIAlertAction(title: "Chrome", style: .default) { (action) in
+            Filters.filter(name: .chrome, image: image, completion: { (filteredImage) in
+                self.imageView.image = filteredImage
+            })
+        }
+        
+        let posterAction = UIAlertAction(title: "Poster", style: .default) { (action) in
+            Filters.filter(name: .poster, image: image, completion: { (filteredImage) in
+                self.imageView.image = filteredImage
+            })
+        }
+        
+        let colorInvertAction = UIAlertAction(title: "Color Invert", style: .default) { (action) in
+            Filters.filter(name: .colorInvert, image: image, completion: { (filteredImage) in
+                self.imageView.image = filteredImage
+            })
+        }
+        
         let resetAction = UIAlertAction(title: "Reset Image", style: .destructive) { (action) in
             self.imageView.image = Filters.originalImage
         }
@@ -86,9 +120,12 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         
         alertController.addAction(backAndWhiteAction)
         alertController.addAction(vintageAction)
+        alertController.addAction(chromeAction)
+        alertController.addAction(posterAction)
+        alertController.addAction(colorInvertAction)
         alertController.addAction(resetAction)
         alertController.addAction(cancelAction)
-            
+        
         self.present(alertController, animated: true, completion: nil)
     }
     

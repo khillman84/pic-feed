@@ -11,9 +11,9 @@ import UIKit
 enum FilterName : String {
     case vintage = "CIPhotoEffectTransfer"
     case blackAndWhite = "CIPhotoEffectMono"
-    case
-    case
-    case
+    case chrome = "CIPhotoEffectChrome"
+    case poster = "CIColorPosterize"
+    case colorInvert = "CIColorInvert"
 }
 
 typealias FilterCompletion = (UIImage?) -> ()
