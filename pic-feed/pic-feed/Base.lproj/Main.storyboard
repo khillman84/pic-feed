@@ -30,13 +30,26 @@
                                     <outletCollection property="gestureRecognizers" destination="Lqg-qb-ROG" appends="YES" id="Xma-xh-Ndq"/>
                                 </connections>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PiD-eG-ggm">
+                                <rect key="frame" x="46.5" y="45" width="281" height="30"/>
+                                <color key="backgroundColor" red="0.0" green="0.42335379464285716" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="POST">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="postButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CKf-yV-uEy"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="PiD-eG-ggm" firstAttribute="width" secondItem="3o8-Gw-KeR" secondAttribute="width" id="5BS-sr-fJa"/>
                             <constraint firstItem="3o8-Gw-KeR" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.75" id="F61-GH-312"/>
+                            <constraint firstItem="3o8-Gw-KeR" firstAttribute="top" secondItem="PiD-eG-ggm" secondAttribute="bottom" constant="8.5" id="NEL-l1-9sk"/>
                             <constraint firstItem="3o8-Gw-KeR" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cce-9M-Fqg"/>
                             <constraint firstItem="3o8-Gw-KeR" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.75" id="feG-aE-F4R"/>
                             <constraint firstItem="3o8-Gw-KeR" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="xmE-1F-Zhi"/>
+                            <constraint firstItem="PiD-eG-ggm" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="zry-HV-3uA"/>
                         </constraints>
                     </view>
                     <connections>

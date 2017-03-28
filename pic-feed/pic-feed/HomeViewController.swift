@@ -39,6 +39,19 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         self.presentActionSheet()
     }
     
+    @IBAction func postButtonPressed(_ sender: Any) {
+        if let image = self.imageView.image {
+            let newPost = Post(image: image)
+            CloudKit.shared.save(post: newPost, completion: { (success) in
+                if success {
+                    print("Saved Post successfully to Cloudkit")
+                } else {
+                    print("We did not successfully save to Cloudkit")
+                }
+            })
+        }
+    }
+    
     func presentActionSheet(){
         let actionSheetController = UIAlertController(title: "Source", message: "Please select source type", preferredStyle: .actionSheet)
         
