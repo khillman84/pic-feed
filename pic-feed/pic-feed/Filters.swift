@@ -19,6 +19,20 @@ enum FilterName : String {
 typealias FilterCompletion = (UIImage?) -> ()
 
 class Filters {
+    
+    static let shared : Filters = {
+        let instance = Filters()
+        
+        let options = [kCIContextWorkingColorSpace: NSNull()]
+        guard let eaglContext = EAGLContext(api: .openGLES2) else { fatalError("Failed to create EAGLContext") }
+        
+        let ciContext = CIContext(eaglContext: eaglContext, options: options)
+        
+        return instance
+    }()
+    
+    let ciContext = CIContext()
+    
     static var originalImage = UIImage()
     
     class func filter(name: FilterName, image: UIImage, completion: @escaping FilterCompletion) {
@@ -29,15 +43,11 @@ class Filters {
             filter.setValue(coreImage, forKey: kCIInputImageKey)
             
             //GPU Context - Always the same three lines (Snippet)
-            let options = [kCIContextWorkingColorSpace: NSNull()]
-            guard let eaglContext = EAGLContext(api: .openGLES2) else { fatalError("Failed to create EAGLContext") }
-            
-            let ciContext = CIContext(eaglContext: eaglContext, options: options)
             
             //Get final image using GPU
             guard let outputImage = filter.outputImage else { fatalError("Failed to get output image from Filter") }
             
-            if let cgImage = ciContext.createCGImage(outputImage, from: outputImage.extent) {
+            if let cgImage = shared.ciContext.createCGImage(outputImage, from: outputImage.extent) {
                 let finalImage = UIImage(cgImage: cgImage)
                 OperationQueue.main.addOperation {
                     completion(finalImage)
