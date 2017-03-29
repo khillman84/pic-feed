@@ -27,6 +27,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
         filterButtonTopConstraint.constant = 4
         postButtonBottomConstraint.constant = 8
