@@ -22,7 +22,7 @@ class GalleryCollectionViewLayout: UICollectionViewFlowLayout { //Snippet
         return availableScreen / CGFloat(self.columns)
     }
     
-    init(columns : Int = 2) {
+    init(columns : Int = 1) {
         self.columns = columns
         
         super.init()
