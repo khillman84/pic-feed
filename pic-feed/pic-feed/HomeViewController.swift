@@ -49,6 +49,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        print("info: \(info)")
         if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
             self.imageView.image = originalImage
             Filters.originalImage = originalImage
@@ -63,7 +64,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     @IBAction func postButtonPressed(_ sender: Any) {
         if let image = self.imageView.image {
-            let newPost = Post(image: image)
+            let newPost = Post(image: image, date: nil)
             CloudKit.shared.save(post: newPost, completion: { (success) in
                 if success {
                     print("Saved Post successfully to Cloudkit")
