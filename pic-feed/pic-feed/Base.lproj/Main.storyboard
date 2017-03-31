@@ -64,7 +64,7 @@
                                     <constraint firstAttribute="height" id="ebk-YC-OfL"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="4pB-Ue-1nx">
-                                    <size key="itemSize" width="132" height="130"/>
+                                    <size key="itemSize" width="145" height="132"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -75,18 +75,21 @@
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6QC-vk-r4C">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6QC-vk-r4C">
                                                     <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vmO-of-LB6">
+                                                    <rect key="frame" x="0.0" y="94" width="145" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                         </view>
-                                        <constraints>
-                                            <constraint firstItem="6QC-vk-r4C" firstAttribute="top" secondItem="cEs-iX-tJW" secondAttribute="top" id="E4e-YI-sUb"/>
-                                            <constraint firstAttribute="trailing" secondItem="6QC-vk-r4C" secondAttribute="trailing" id="Ni6-EB-NWJ"/>
-                                            <constraint firstItem="6QC-vk-r4C" firstAttribute="leading" secondItem="cEs-iX-tJW" secondAttribute="leading" id="Nva-9P-JGV"/>
-                                            <constraint firstAttribute="bottom" secondItem="6QC-vk-r4C" secondAttribute="bottom" id="cob-ex-DAU"/>
-                                        </constraints>
                                         <connections>
+                                            <outlet property="filterLabel" destination="vmO-of-LB6" id="DqY-Kr-uZk"/>
                                             <outlet property="imageView" destination="6QC-vk-r4C" id="gwf-Nm-lBI"/>
                                         </connections>
                                     </collectionViewCell>
