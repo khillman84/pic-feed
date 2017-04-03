@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import Social
 
-class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class HomeViewController: UIViewController, UINavigationControllerDelegate {
+    
+    let filterNames = [FilterName.vintage, FilterName.blackAndWhite, FilterName.chrome , FilterName.poster , FilterName.colorInvert]
     
     let imagePicker = UIImagePickerController()
 
@@ -17,13 +20,25 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     @IBOutlet weak var postButtonBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var textBottomConstraing: NSLayoutConstraint!
 
+    @IBOutlet weak var collectionView: UICollectionView!
+    
+    @IBOutlet weak var collectionViewHeightConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let defaultImage = imageView.image
-        Filters.originalImage = defaultImage!
-        
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+        setupGalleryDelegate()
+        Filters.originalImage = imageView.image
+    }
+    
+    func setupGalleryDelegate(){
+        if let tabBarController = self.tabBarController {
+            guard let viewControllers = tabBarController.viewControllers else { return }
+            guard let galleryController = viewControllers[1] as? GalleryViewController else { return }
+            galleryController.delegate = self
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -38,25 +53,8 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         }
     }
     
-    func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType){
-        self.imagePicker.delegate = self
-        self.imagePicker.sourceType = sourceType
-        self.present(self.imagePicker, animated: true, completion: nil)
-    }
     
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        print("info: \(info)")
-        if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
-            self.imageView.image = originalImage
-            Filters.originalImage = originalImage
-        }
-        self.dismiss(animated: true, completion: nil)
-    }
-    
+    //MARK: Actions
     @IBAction func imageTapped(_ sender: Any) {
         print("user tapped image")
         self.presentActionSheet()
@@ -76,57 +74,31 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     @IBAction func filterButtonPressed(_ sender: Any) {
-        guard let image = self.imageView.image else { return }
+//        guard let image = self.imageView.image else { return }
         
-        let alertController = UIAlertController(title: "Filter", message: "Please select a filter", preferredStyle: .alert)
-        
-        let backAndWhiteAction = UIAlertAction(title: "Black", style: .default) { (action) in
-            Filters.filter(name: .blackAndWhite, image: image, completion: { (filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        
-        let vintageAction = UIAlertAction(title: "Vintage", style: .default) { (action) in
-            Filters.filter(name: .vintage, image: image, completion: { (filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        
-        let chromeAction = UIAlertAction(title: "Chrome", style: .default) { (action) in
-            Filters.filter(name: .chrome, image: image, completion: { (filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        
-        let posterAction = UIAlertAction(title: "Poster", style: .default) { (action) in
-            Filters.filter(name: .poster, image: image, completion: { (filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        
-        let colorInvertAction = UIAlertAction(title: "Color Invert", style: .default) { (action) in
-            Filters.filter(name: .colorInvert, image: image, completion: { (filteredImage) in
-                self.imageView.image = filteredImage
-            })
-        }
-        
-        let resetAction = UIAlertAction(title: "Reset Image", style: .destructive) { (action) in
-            self.imageView.image = Filters.originalImage
-        }
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        alertController.addAction(backAndWhiteAction)
-        alertController.addAction(vintageAction)
-        alertController.addAction(chromeAction)
-        alertController.addAction(posterAction)
-        alertController.addAction(colorInvertAction)
-        alertController.addAction(resetAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
+            if  self.collectionViewHeightConstraint.constant == 0 {
+                self.collectionViewHeightConstraint.constant = 150
+                UIView.animate(withDuration: 0.5) {
+                    self.view.layoutIfNeeded()
+                }
+            } else {
+                self.collectionViewHeightConstraint.constant = 0
+                UIView.animate(withDuration: 0.5) {
+                    self.view.layoutIfNeeded()
+                }
+            }
     }
+
     
+    @IBAction func userLongPressed(_ sender: UILongPressGestureRecognizer) {
+        if(SLComposeViewController.isAvailable(forServiceType: SLServiceTypeTwitter)){
+            guard let composeController = SLComposeViewController(forServiceType: SLServiceTypeTwitter) else { return }
+            composeController.add(self.imageView.image)
+            self.present(composeController, animated: true, completion: nil)
+        }
+        
+        
+    }
     
     func presentActionSheet(){
         let actionSheetController = UIAlertController(title: "Source", message: "Please select source type", preferredStyle: .actionSheet)
@@ -150,6 +122,75 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
 }
 
+//MARK: UICollectionViewDataSource
+extension HomeViewController : UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let filterCell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCell.identifier, for: indexPath) as! FilterCell
+        
+        guard let originalImage = Filters.originalImage else { return filterCell }
+        
+        guard let resizedImage = originalImage.resize(size: CGSize(width: 150, height: 150)) else { return filterCell }
+        
+        let filterName = self.filterNames[indexPath.row]
+        
+        Filters.shared.filter(name: filterName, image: resizedImage) { (filteredImage) in
+            filterCell.imageView.image = filteredImage
+            filterCell.filterLabel.text = String(describing: filterName)
+        }
+        
+        return filterCell
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return filterNames.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath.row)
+        guard let image = Filters.originalImage else { return }
+        let filter = self.filterNames[indexPath.row]
+        Filters.shared.filter(name: filter, image: image) { (filteredImage) in
+            self.imageView.image = filteredImage
+        }
+    }
+}
+
+
+//MARK: Image Picker Controller Delegate
+extension HomeViewController : UIImagePickerControllerDelegate {
+    
+    func presentImagePickerWith(sourceType: UIImagePickerControllerSourceType){
+        self.imagePicker.delegate = self
+        self.imagePicker.sourceType = sourceType
+        self.present(self.imagePicker, animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            self.imageView.image = originalImage
+            Filters.originalImage = originalImage
+            self.collectionView.reloadData()
+        }
+        self.dismiss(animated: true, completion: nil)
+    }
+}
+
+//MARK: Gallery View Controller Delegate
+extension HomeViewController: GalleryViewControllerDelegate {
+    func galleryController(didSelect image: UIImage) {
+        self.imageView.image = image
+        Filters.originalImage = image
+        self.tabBarController?.selectedIndex = 0
+        
+    }
+}
 
 
 
@@ -162,3 +203,64 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        let alertController = UIAlertController(title: "Filter", message: "Please select a filter", preferredStyle: .alert)
+//
+//        let backAndWhiteAction = UIAlertAction(title: "Black", style: .default) { (action) in
+//            Filters.filter(name: .blackAndWhite, image: image, completion: { (filteredImage) in
+//                self.imageView.image = filteredImage
+//            })
+//        }
+//
+//        let vintageAction = UIAlertAction(title: "Vintage", style: .default) { (action) in
+//            Filters.filter(name: .vintage, image: image, completion: { (filteredImage) in
+//                self.imageView.image = filteredImage
+//            })
+//        }
+//
+//        let chromeAction = UIAlertAction(title: "Chrome", style: .default) { (action) in
+//            Filters.filter(name: .chrome, image: image, completion: { (filteredImage) in
+//                self.imageView.image = filteredImage
+//            })
+//        }
+//
+//        let posterAction = UIAlertAction(title: "Poster", style: .default) { (action) in
+//            Filters.filter(name: .poster, image: image, completion: { (filteredImage) in
+//                self.imageView.image = filteredImage
+//            })
+//        }
+//
+//        let colorInvertAction = UIAlertAction(title: "Color Invert", style: .default) { (action) in
+//            Filters.filter(name: .colorInvert, image: image, completion: { (filteredImage) in
+//                self.imageView.image = filteredImage
+//            })
+//        }
+//
+//        let resetAction = (title: "Reset Image", style: .destructive) { (action) in
+//            self.imageView.image = Filters.originalImage
+//        }
+//
+//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+//
+//        alertController.addAction(backAndWhiteAction)
+//        alertController.addAction(vintageAction)
+//        alertController.addAction(chromeAction)
+//        alertController.addAction(posterAction)
+//        alertController.addAction(colorInvertAction)
+//        alertController.addAction(resetAction)
+//        alertController.addAction(cancelAction)
+//
+//        self.present(alertController, animated: true, completion: nil)
