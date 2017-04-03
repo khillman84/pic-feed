@@ -14,12 +14,12 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate {
     let filterNames = [FilterName.vintage, FilterName.blackAndWhite, FilterName.chrome , FilterName.poster , FilterName.colorInvert]
     
     let imagePicker = UIImagePickerController()
-
+    
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var filterButtonTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var postButtonBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var textBottomConstraing: NSLayoutConstraint!
-
+    
     @IBOutlet weak var collectionView: UICollectionView!
     
     @IBOutlet weak var collectionViewHeightConstraint: NSLayoutConstraint!
@@ -74,21 +74,21 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate {
     }
     
     @IBAction func filterButtonPressed(_ sender: Any) {
-//        guard let image = self.imageView.image else { return }
+        //        guard let image = self.imageView.image else { return }
         
-            if  self.collectionViewHeightConstraint.constant == 0 {
-                self.collectionViewHeightConstraint.constant = 150
-                UIView.animate(withDuration: 0.5) {
-                    self.view.layoutIfNeeded()
-                }
-            } else {
-                self.collectionViewHeightConstraint.constant = 0
-                UIView.animate(withDuration: 0.5) {
-                    self.view.layoutIfNeeded()
-                }
+        if  self.collectionViewHeightConstraint.constant == 0 {
+            self.collectionViewHeightConstraint.constant = 150
+            UIView.animate(withDuration: 0.5) {
+                self.view.layoutIfNeeded()
             }
+        } else {
+            self.collectionViewHeightConstraint.constant = 0
+            UIView.animate(withDuration: 0.5) {
+                self.view.layoutIfNeeded()
+            }
+        }
     }
-
+    
     
     @IBAction func userLongPressed(_ sender: UILongPressGestureRecognizer) {
         if(SLComposeViewController.isAvailable(forServiceType: SLServiceTypeTwitter)){
@@ -96,8 +96,6 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate {
             composeController.add(self.imageView.image)
             self.present(composeController, animated: true, completion: nil)
         }
-        
-        
     }
     
     func presentActionSheet(){
@@ -119,7 +117,6 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate {
         
         self.present(actionSheetController, animated: true, completion: nil)
     }
-    
 }
 
 //MARK: UICollectionViewDataSource
@@ -138,9 +135,7 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
             filterCell.imageView.image = filteredImage
             filterCell.filterLabel.text = String(describing: filterName)
         }
-        
         return filterCell
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
